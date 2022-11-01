@@ -1,0 +1,51 @@
+var express = require("express");
+var router = express.Router();
+const { getTodos } = require('../services/todos.service');
+
+router.get("/", (req, res) => {
+  const todos = getTodos();
+  res.render("todos", { title: "Todos", todos });
+});
+
+router.get("/:id", (req, res) => {
+  const { id } = req.params;
+  if (id !== undefined) {
+    const todo = getTodo(id);
+    if (todo) res.send(todo);
+    else res.status(404).send("Todo not found");
+  } else {
+    res.status(400).send("Bad request");
+  }
+});
+
+router.post("/", (req, res) => {
+  const { title } = req.body;
+  if (title) {
+    const todo = createTodo(title);
+    res.status(201).send(todo);
+  } else res.status(400).send({ error: "TITLE_REQUIRED" });
+});
+
+router.put("/:id", (req, res) => {
+  const { id } = req.params;
+  if (id !== undefined && req.body !== undefined) {
+    const todo = editTodo(id, req.body);
+    res.status(201).send(todo);
+  } else res.status(400).send("Bad Request");
+});
+
+router.delete("/:id", (req, res) => {
+  const { id } = req.params;
+  if (id !== undefined) {
+    const todo = deleteTodo(id);
+    if (todo) {
+      res.send(todo);
+    } else {
+      res.status(404).send("Not Found");
+    }
+  } else {
+    res.status(400).send("Bad Request");
+  }
+});
+
+module.exports = router;
