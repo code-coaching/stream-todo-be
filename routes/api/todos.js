@@ -27,7 +27,8 @@ router.get("/:id", (req, res) => {
 router.post("/", (req, res) => {
   const { title } = req.body;
   if (title) {
-    const todo = createTodo(title);
+    const { description } = req.body;
+    const todo = createTodo(title, description);
     res.status(201).send(todo);
   } else res.status(400).send({ error: "TITLE_REQUIRED" });
 });
